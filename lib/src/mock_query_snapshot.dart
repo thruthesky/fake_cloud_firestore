@@ -9,7 +9,7 @@ class MockQuerySnapshot<T extends Object?> implements QuerySnapshot<T> {
   final List<DocumentChange<T>> _documentChanges = <DocumentChange<T>>[];
 
   MockQuerySnapshot(this._docSnapshots) {
-    // TODO: support another change type (removed, modified).
+    
     // ref: https://pub.dev/documentation/cloud_firestore_platform_interface/latest/cloud_firestore_platform_interface/DocumentChangeType-class.html
     _docSnapshots.asMap().forEach((index, docSnapshot) {
       _documentChanges.add(MockDocumentChange<T>(
@@ -30,7 +30,7 @@ class MockQuerySnapshot<T extends Object?> implements QuerySnapshot<T> {
   List<DocumentChange<T>> get docChanges => _documentChanges;
 
   @override
-  // TODO: implement metadata
+  
   SnapshotMetadata get metadata => throw UnimplementedError();
 
   @override

@@ -28,21 +28,20 @@ class FakeFirebaseFirestore implements FirebaseFirestore {
     final segments = path.split('/');
     assert(segments.length % 2 == 1,
         'Invalid document reference. Collection references must have an odd number of segments');
-    return MockCollectionReference(this, path, getSubpath(_root, path),
-        _docsData, getSubpath(_snapshotStreamControllerRoot, path));
+    return MockCollectionReference(this, path, getSubpath(_root, path), _docsData,
+        getSubpath(_snapshotStreamControllerRoot, path));
   }
 
   @override
-  CollectionReference<Map<String, dynamic>> collectionGroup(
-      String collectionId) {
+  CollectionReference<Map<String, dynamic>> collectionGroup(String collectionId) {
     assert(!collectionId.contains('/'), 'Collection ID should not contain "/"');
     return MockCollectionReference(
       this,
       collectionId,
       buildTreeIncludingCollectionId(_root, _root, collectionId, {}),
       _docsData,
-      buildTreeIncludingCollectionId(_snapshotStreamControllerRoot,
-          _snapshotStreamControllerRoot, collectionId, {}),
+      buildTreeIncludingCollectionId(
+          _snapshotStreamControllerRoot, _snapshotStreamControllerRoot, collectionId, {}),
       isCollectionGroup: true,
     );
   }
@@ -56,15 +55,8 @@ class FakeFirebaseFirestore implements FirebaseFirestore {
     assert(segments.length % 2 == 0,
         'Invalid document reference. Document references must have an even number of segments');
     final documentId = segments.last;
-    return MockDocumentReference(
-        this,
-        path,
-        documentId,
-        getSubpath(_root, path),
-        _docsData,
-        _root,
-        getSubpath(_snapshotStreamControllerRoot, path),
-        null);
+    return MockDocumentReference(this, path, documentId, getSubpath(_root, path), _docsData, _root,
+        getSubpath(_snapshotStreamControllerRoot, path), null);
   }
 
   @override
@@ -74,7 +66,7 @@ class FakeFirebaseFirestore implements FirebaseFirestore {
 
   @override
   Future<T> runTransaction<T>(TransactionHandler<T> transactionHandler,
-      {Duration timeout = const Duration(seconds: 30)}) async {
+      {Duration timeout = const Duration(seconds: 30), int maxAttempts = 5}) async {
     Transaction transaction = _DummyTransaction();
     return await transactionHandler(transaction);
   }
@@ -116,8 +108,7 @@ class FakeFirebaseFirestore implements FirebaseFirestore {
   }
 
   void _setupFieldValueFactory() {
-    firestore_interface.FieldValueFactoryPlatform.instance =
-        MockFieldValueFactoryPlatform();
+    firestore_interface.FieldValueFactoryPlatform.instance = MockFieldValueFactoryPlatform();
   }
 
   // Required because FirebaseFirestore' == expects dynamic, while Mock's == expects an object.
@@ -134,13 +125,11 @@ class _DummyTransaction implements Transaction {
   bool _foundWrite = false;
 
   @override
-  Future<DocumentSnapshot<T>> get<T extends Object?>(
-      DocumentReference<T> documentReference) {
+  Future<DocumentSnapshot<T>> get<T extends Object?>(DocumentReference<T> documentReference) {
     if (_foundWrite) {
       throw PlatformException(
           code: '3',
-          message:
-              'Firestore transactions require all reads to be executed before all writes');
+          message: 'Firestore transactions require all reads to be executed before all writes');
     }
     return documentReference.get();
   }
@@ -153,16 +142,14 @@ class _DummyTransaction implements Transaction {
   }
 
   @override
-  Transaction update(
-      DocumentReference documentReference, Map<String, dynamic> data) {
+  Transaction update(DocumentReference documentReference, Map<String, dynamic> data) {
     _foundWrite = true;
     documentReference.update(data);
     return this;
   }
 
   @override
-  Transaction set<T>(DocumentReference<T> documentReference, T data,
-      [SetOptions? options]) {
+  Transaction set<T>(DocumentReference<T> documentReference, T data, [SetOptions? options]) {
     _foundWrite = true;
     documentReference.set(data);
     return this;

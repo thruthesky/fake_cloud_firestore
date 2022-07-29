@@ -139,7 +139,7 @@ class MockDocumentReference<T extends Object?> implements DocumentReference<T> {
       });
       return;
     }
-    // TODO: support handling values in lists.
+    
 
     // Handle values.
     if (value is FieldValue) {

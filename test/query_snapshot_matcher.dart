@@ -18,7 +18,6 @@ class QuerySnapshotMatcher implements Matcher {
       item, Description mismatchDescription, Map matchState, bool verbose) {
     mismatchDescription.add('Snapshot does not match expected data.');
 
-    // TODO: this will crash if there are fewer matchers than documents.
 
     final snapshot = item as QuerySnapshot;
     for (var i = 0; i < snapshot.docs.length; i++) {

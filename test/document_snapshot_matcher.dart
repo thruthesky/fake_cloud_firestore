@@ -22,15 +22,11 @@ class DocumentSnapshotMatcher implements Matcher {
   Description describeMismatch(
       item, Description mismatchDescription, Map matchState, bool verbose) {
     final snapshot = item as DocumentSnapshot;
-    // TODO: generate more meaningful descriptions.
-    if (_documentId != null &&
-        !equals(snapshot.id).matches(_documentId, matchState)) {
-      equals(snapshot.id).describeMismatch(
-          _documentId, mismatchDescription, matchState, verbose);
+    if (_documentId != null && !equals(snapshot.id).matches(_documentId, matchState)) {
+      equals(snapshot.id).describeMismatch(_documentId, mismatchDescription, matchState, verbose);
     }
     if (!equals(snapshot.data()).matches(_data, matchState)) {
-      equals(snapshot.data())
-          .describeMismatch(_data, mismatchDescription, matchState, verbose);
+      equals(snapshot.data()).describeMismatch(_data, mismatchDescription, matchState, verbose);
     }
     return mismatchDescription;
   }
